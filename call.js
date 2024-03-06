@@ -141,6 +141,7 @@ function call() {
 			const historyNumValue =
 				e.target.textContent ||
 				e.target.closest(".call__history-item").textContent
+			console.log(historyNumValue)
 			callNumber(e, historyNumValue)
 		}
 	}
@@ -161,8 +162,8 @@ function call() {
 			$(".call__user")[0].innerText = ""
 			callStatus.textContent = ""
 		}, 2000)
-		$("#call").css({ display: "flex" })
-		$("#hangup").css({ display: "none" })
+		$("#callNumberButton").css({ display: "flex" })
+		$("#hangUpButton").css({ display: "none" })
 	}
 
 	function callNumber(e, value = "") {
@@ -177,8 +178,9 @@ function call() {
 		createHistoryNum(number)
 		callUser(number)
 		$(".call__user")[0].innerText = `Вы звоните по номеру:${number}`
-		$("#call").css({ display: "none" })
-		$("#hangup").css({ display: "flex" })
+		$("#callNumberButton").css({ display: "none" })
+		$("#hangUpButton").css({ display: "flex" })
+
 		inputNumValue = ""
 	}
 	function callUser(number) {
@@ -251,9 +253,6 @@ function call() {
 			callEnded()
 			stopSound("ringback.ogg")
 			playSound("rejected.mp3", false)
-
-			this.callButton.removeClass("d-none")
-			this.hangUpButton.addClass("d-none")
 		})
 
 		// Поговорили, разбежались
@@ -263,9 +262,6 @@ function call() {
 			callEnded()
 			playSound("rejected.mp3", false)
 			JsSIP.Utils.closeMediaStream(this._localClonedStream)
-
-			this.callButton.removeClass("d-none")
-			this.hangUpButton.addClass("d-none")
 		})
 
 		// Звонок принят, моно начинать говорить
