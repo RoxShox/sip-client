@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--<link rel="stylesheet" href="bootstrap/css/bootstrap.css"> -->
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+			integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+			crossorigin="anonymous"
+		/>
+		<link rel="stylesheet" href="./styles.css" />
+
+		<title>webrtc call</title>
+		<script>
+			// Set debug
+			window.localStorage.setItem("debug", "* -engine* -socket* *ERROR* *WARN*")
+		</script>
+		<script src="jssip-3.2.14.js"></script>
+		<script src="call.js"></script>
+	</head>
+
+	<body onload="loadPage()">
+		<div class="container">
+			<div class="row row-space">
+				<div class="col-md-6 text-center">
+					<h2 id="notifyFlash" class="text-danger"></h2>
+
+					<div style="margin-top: 10px">
+						<span id="status"></span>
+					</div>
+				</div>
+			</div>
+			<div class="wrapper">
+				<div class="form">
+					<label class="form-label">
+						<span class="">Login</span>
+						<input id="loginText" type="text" class="" />
+					</label>
+
+					<label class="form-label">
+						<span class="">Password</span>
+						<input id="passwordText" type="password" class="" />
+					</label>
+
+					<button id="loginButton" type="button" class="" onclick="login()">
+						Login
+					</button>
+					<button id="logOutButton" type="button" class="" onclick="logout()">
+						LogOut
+					</button>
+				</div>
+
+				<div class="content__wrap">
+					<div id="callControl">
+						<h2>Web Sip клиент на основе JsSIP</h2>
+						<div id="to">
+							<input
+								class="disabled"
+								id="num"
+								type="text"
+								placeholder="Введите номер телефона"
+							/>
+						</div>
+						<div class="call__user"></div>
+						<div class="call__status"></div>
+						<h1 id="timer" class="hide">00:00:00</h1>
+
+						<button id="callNumberButton" type="button" class="">Вызов</button>
+						<button
+							id="hangUpButton"
+							type="button"
+							class="btn btn-danger d-none"
+							onclick="hangUp()"
+						>
+							Завершить
+						</button>
+					</div>
+					<div>
+						<h3>История звонков</h3>
+						<div class="call__history-wrap"></div>
+					</div>
+				</div>
+				<!-- <div class="" id="callPanel">
+					<input
+						id="callNumberText"
+						type="text"
+						class=""
+						placeholder="Call number"
+					/>
+					<button id="callNumberButton" type="button" class="" onclick="call()">
+						Call
+					</button>
+					<button
+						id="hangUpButton"
+						type="button"
+						class="btn btn-danger d-none"
+						onclick="hangUp()"
+					>
+						Hang Up
+					</button>
+				</div> -->
+			</div>
+
+			<audio id="localAudio" autoplay muted></audio>
+			<audio id="remoteAudio" autoplay></audio>
+			<audio id="sounds" autoplay></audio>
+		</div>
+
+		<!-- Bootstrap -->
+		<script
+			src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+			integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+			integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+			integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+			crossorigin="anonymous"
+		></script>
+	</body>
+</html>

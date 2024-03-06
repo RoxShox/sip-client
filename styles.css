@@ -1,0 +1,93 @@
+.wrapper{
+    display: flex; justify-content: space-evenly;
+}
+
+.form{
+    max-width: 300px;
+}
+
+.form-label{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.content__wrap {
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+}
+
+.disabled {
+    opacity: 0.5;
+}
+
+#callControl {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#num {
+    margin-top: 20px;
+    padding-left: 10px;
+    font-size: 1em;
+    font-family: "Open Sans", sans-serif;
+    width: 300px;
+    height: 40px;
+    border: 0px;
+    border-bottom: 1px solid #b8b8b8;
+}
+
+#callNumberButton {
+    display: flex;
+    background-color: #389400;
+}
+
+#hangUpButton {
+    display: none;
+    background-color: #a90002;
+}
+
+#callNumberButton,
+#hangUpButton {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    width: 260px;
+    height: 40px;
+    font-size: 20px;
+    margin: 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    border:none
+}
+
+.call__history-wrap {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+.call__history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 300px;
+    width: 100%;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 18px;
+}
+
+
+
+.hide {
+    display: none;
+}
+
+.show {
+    display: block;
+}
