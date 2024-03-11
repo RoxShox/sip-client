@@ -29,17 +29,14 @@ function login() {
 		sockets: [socket],
 	})
 
-	// соединяемся с астером
 	this._ua.on("connecting", () => {
 		console.log("UA connecting")
 	})
 
-	// соединились с астером
 	this._ua.on("connected", () => {
 		console.log("UA connected")
 	})
 
-	// астер нас зарегал, теперь можно звонить и принимать звонки
 	this._ua.on("registered", () => {
 		console.log("UA registered")
 
@@ -51,12 +48,10 @@ function login() {
 		$("#callPanel").removeClass("d-none")
 	})
 
-	// астер про нас больше не знает
 	this._ua.on("unregistered", () => {
 		console.log("UA unregistered")
 	})
 
-	// астер не зарегал нас, что то не то, скорее всего неверный логин или пароль
 	this._ua.on("registrationFailed", (data) => {
 		console.error("UA registrationFailed", data.cause)
 	})
@@ -77,7 +72,7 @@ function logout() {
 
 	$("#callPanel").addClass("d-none")
 
-	// закрываем всё нафиг, вылогиниваемся из астера, закрываем коннект
+	// закрываем всё
 	this._ua.stop()
 }
 
@@ -126,6 +121,7 @@ function call() {
 			.toString()
 			.padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
 	}
+	// создаём номер в истории вызовов
 	function createHistoryNum(number) {
 		const div = document.createElement("div")
 		const img = document.createElement("img")
@@ -136,18 +132,19 @@ function call() {
 		historyCallWrap.prepend(div)
 	}
 
+	// вызов номер из истории
 	function callHistoryNum(e) {
 		if (e.target.closest(".call__history-item") || e.target.tagName == "IMG") {
 			const historyNumValue =
 				e.target.textContent ||
 				e.target.closest(".call__history-item").textContent
-			console.log(historyNumValue)
 			callNumber(e, historyNumValue)
 		}
 	}
 
 	callBtn.addEventListener("click", callNumber)
 
+	// очищения эффектов при завершение вызова
 	function callEnded() {
 		callStatus.textContent = "Статус звонка: Звонок завершен"
 		clearInterval(interval)
@@ -166,10 +163,9 @@ function call() {
 		$("#hangUpButton").css({ display: "none" })
 	}
 
+	// Вызываем абонента
 	function callNumber(e, value = "") {
 		let inputNumValue = $("#num").val()
-		console.log(inputNumValue)
-		console.log("log")
 		if (value == "" && inputNumValue == "") {
 			return
 		}
@@ -183,13 +179,15 @@ function call() {
 
 		inputNumValue = ""
 	}
+
+	// логика вызова
 	function callUser(number) {
 		console.log(number)
 		console.log("звонок пошел")
 		this.session = this._ua.call(number, {
 			pcConfig: {
 				hackStripTcp: true, // Важно для хрома, чтоб он не тупил при звонке
-				rtcpMuxPolicy: "negotiate", // Важно для хрома, чтоб работал multiplexing. Эту штуку обязательно нужно включить на астере.
+				rtcpMuxPolicy: "negotiate", // Важно для хрома, чтоб работал multiplexing.
 				iceServers: [],
 			},
 			mediaConstraints: {
@@ -202,21 +200,11 @@ function call() {
 			},
 		})
 
-		// Это нужно для входящего звонка, пока не используем
-		this._ua.on("newRTCSession", (data) => {
-			if (!this._mounted) return
-
-			if (data.originator === "local") return
-
-			// audioPlayer.play('ringing');
-		})
-
-		// Астер нас соединил с абонентом
 		this.session.on("connecting", () => {
 			console.log("UA session connecting")
 			playSound("ringback.ogg", true)
 
-			// Тут мы подключаемся к микрофону и цепляем к нему поток, который пойдёт в астер
+			// Тут мы подключаемся к микрофону и цепляем к нему поток
 			let peerconnection = this.session.connection
 			let localStream = peerconnection.getLocalStreams()[0]
 
@@ -231,7 +219,7 @@ function call() {
 				localAudioControl.srcObject = this._localClonedStream
 			}
 
-			// Как только астер отдаст нам поток абонента, мы его засунем к себе в наушники
+			// Как только нам отдаётся нам поток абонента, мы его засовываем к себе в наушники
 			peerconnection.addEventListener("addstream", (event) => {
 				console.log("UA session addstream")
 
@@ -276,131 +264,3 @@ function call() {
 		})
 	}
 }
-
-// Делаем ИСХОДЯЩИЙ звонок
-// Принимать звонки этот код не умеет!
-
-// function callUser() {
-// 	const callBtn = document.querySelector("#callNumberButton")
-
-// 	const callStatus = document.querySelector(".call__status")
-// 	const historyCallWrap = document.querySelector(".call__history-wrap")
-// 	const inputNum = document.querySelector("#num")
-
-// 	let timer = document.getElementById("timer")
-
-// 	let seconds = 0
-// 	let minutes = 0
-// 	let hours = 0
-// 	let interval
-
-// 	// Делаем вид что после регистрации кнопка вызова стала активной
-
-// 	historyCallWrap.addEventListener("click", callHistoryNum)
-
-// 	function updateTime() {
-// 		seconds++
-// 		if (seconds === 60) {
-// 			minutes++
-// 			seconds = 0
-// 		}
-// 		if (minutes === 60) {
-// 			hours++
-// 			minutes = 0
-// 		}
-// 		timer.textContent = `${hours.toString().padStart(2, "0")}:${minutes
-// 			.toString()
-// 			.padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-// 	}
-
-// 	// Обработка событии исх. звонка
-// 	// let eventHandlers = {
-// 	// 	progress: function (e) {
-// 	// 		console.log("ожидание")
-// 	// 		callStatus.textContent = "Статус звонка: Ожидание ответа"
-// 	// 		session.connection.ontrack = function (e) {
-// 	// 			console.log(e)
-// 	// 			remoteAudio.srcObject = e.streams[0]
-// 	// 		}
-// 	// 	},
-// 	// 	failed: function (e) {
-// 	// 		callEnded()
-// 	// 	},
-// 	// 	ended: function (e) {
-// 	// 		callEnded()
-// 	// 	},
-// 	// 	confirmed: function (e) {
-// 	// 		interval = setInterval(updateTime, 1000)
-// 	// 		timer.classList.remove("hide")
-// 	// 		timer.classList.add("show")
-// 	// 		callStatus.textContent = "Статус звонка: В процессе"
-// 	// 		console.log("звонок принят")
-// 	// 	},
-// 	// }
-
-// 	function createHistoryNum(number) {
-// 		const div = document.createElement("div")
-// 		const img = document.createElement("img")
-// 		img.src = "../img/call.svg"
-// 		div.classList.add("call__history-item")
-// 		div.textContent = number
-// 		div.append(img)
-// 		historyCallWrap.prepend(div)
-// 	}
-
-// 	function callHistoryNum(e) {
-// 		if (e.target.closest(".call__history-item") || e.target.tagName == "IMG") {
-// 			const historyNumValue =
-// 				e.target.textContent ||
-// 				e.target.closest(".call__history-item").textContent
-// 			callNumber(e, historyNumValue)
-// 		}
-// 	}
-
-// 	// Очистка всей информации после завершения звонка
-// 	function callEnded() {
-// 		callStatus.textContent = "Статус звонка: Звонок завершен"
-// 		clearInterval(interval)
-// 		setTimeout(() => {
-// 			clearInterval(interval)
-// 			seconds = 0
-// 			minutes = 0
-// 			hours = 0
-// 			timer.textContent = "00:00:00"
-// 			timer.classList.remove("show")
-// 			timer.classList.add("hide")
-// 			$(".call__user")[0].innerText = ""
-// 			callStatus.textContent = ""
-// 		}, 2000)
-// 		$("#call").css({ display: "flex" })
-// 		$("#hangup").css({ display: "none" })
-// 	}
-// 	// Кнопка для звонка
-
-// 	callBtn.addEventListener("click", callNumber)
-
-// 	function callNumber(e, value = "") {
-// 		console.log("click")
-// 		if (value == "" && inputNum.value == "") {
-// 			return
-// 		}
-// 		const number = inputNum.value === "" ? value : inputNum.value
-// 		createHistoryNum(number)
-// 		call(number)
-// 		// session = ua.call(number, options)
-// 		// $(".call__user")[0].innerText = `Вы звоните по номеру:${number}`
-// 		// $("#call").css({ display: "none" })
-// 		// $("#hangup").css({ display: "flex" })
-// 		// inputNum.value = ""
-// 	}
-
-// 	// Кнопка для отбоя звонка
-// 	$("#hangup").click(function () {
-// 		if (session) {
-// 			session.terminate()
-// 		}
-// 		$(".call__user").val(``)
-// 		$("#call").css({ display: "flex" })
-// 		$("#hangup").css({ display: "none" })
-// 	})
-// }
